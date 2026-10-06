@@ -1,7 +1,7 @@
 <!-- ============================================================
      menu.html — Tacos Delicia · Menu
-     Full menu page with interactive category filtering.
-     Design system matches index.html.
+     Hero badge and footer CTA removed. Motion system added.
+     Filter re-animation wired.
      ============================================================ -->
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
@@ -25,11 +25,35 @@ tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"on-primary-con
 header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);border-bottom:1px solid rgba(221,192,185,0.5);}
 .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 350,'GRAD' 0,'opsz' 24;}
 :focus-visible{outline:2px solid #98381d;outline-offset:2px;border-radius:0.5rem;}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
-/* Smooth reveal for filtered cards */
-.menu-card{transition:opacity 240ms cubic-bezier(0.22,1,0.36,1),transform 240ms cubic-bezier(0.22,1,0.36,1),box-shadow 300ms ease,border-color 200ms ease;}
+
+/* ==== Motion system ==== */
+:root{--ease-out-quint:cubic-bezier(0.22,1,0.36,1);--ease-out-soft:cubic-bezier(0.16,1,0.3,1);}
+
+/* Scroll reveal */
+[data-reveal]{opacity:0;transform:translateY(20px);transition:opacity 700ms var(--ease-out-quint),transform 700ms var(--ease-out-quint);transition-delay:var(--reveal-delay,0ms);}
+[data-reveal="fade"]{transform:none;}
+[data-reveal="from-left"]{transform:translateX(-24px);}
+[data-reveal="from-right"]{transform:translateX(24px);}
+[data-reveal="scale"]{transform:scale(0.97);}
+[data-reveal].is-in{opacity:1;transform:none;}
+
+/* Hero entrance */
+@keyframes hero-rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+.hero-rise{animation:hero-rise 900ms var(--ease-out-quint) both;}
+
+/* Mobile drawer entrance */
+@keyframes drawer-fade{from{opacity:0;}to{opacity:1;}}
+@keyframes drawer-slide{from{transform:translateX(100%);}to{transform:none;}}
+#mobile-drawer:not(.hidden){animation:drawer-fade 250ms var(--ease-out-quint) both;}
+#mobile-drawer:not(.hidden) > div{animation:drawer-slide 350ms var(--ease-out-quint) both;}
+
+/* Menu card filtered state */
 .menu-card.is-hidden{display:none;}
-.menu-card.is-entering{opacity:0;transform:translateY(8px);}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
+  [data-reveal]{opacity:1!important;transform:none!important;}
+}
 </style>
 </head>
 <body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
@@ -67,7 +91,7 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
 </header>
 
 <!-- ==================== MOBILE DRAWER ==================== -->
-<div class="fixed inset-0 z-50 hidden bg-on-surface/30 backdrop-blur-sm transition-opacity duration-300" id="mobile-drawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
+<div class="fixed inset-0 z-50 hidden bg-on-surface/30 backdrop-blur-sm" id="mobile-drawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
   <div class="fixed inset-y-0 right-0 w-full max-w-[22rem] bg-surface p-6 shadow-[0_20px_60px_rgba(33,26,23,0.18)] flex flex-col justify-between overflow-y-auto">
     <div class="flex flex-col">
       <div class="flex items-center justify-between pb-6 border-b border-outline-variant/40 mb-6">
@@ -107,16 +131,10 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
 <section class="w-full bg-surface py-16 md:py-20 lg:py-24">
   <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin">
     <div class="max-w-3xl">
-      <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-surface-container border border-outline-variant/50 mb-7">
-        <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-        <span class="font-kicker text-kicker uppercase text-on-surface-variant tracking-widest">The Menu</span>
-        <span class="w-px h-3 bg-outline-variant"></span>
-        <span class="font-kicker text-kicker uppercase text-on-surface-variant tracking-widest">Chicago, IL</span>
-      </div>
-      <h1 class="font-display-xl text-display-xl-mobile md:text-display-xl text-on-surface tracking-tight mb-6">
+      <h1 class="font-display-xl text-display-xl-mobile md:text-display-xl text-on-surface tracking-tight mb-6 hero-rise" style="animation-delay:0ms">
         The Menu
       </h1>
-      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed hero-rise" style="animation-delay:120ms">
         Classic Mexican favorites, made your way. Filter below, then choose your protein.
       </p>
     </div>
@@ -127,8 +145,7 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
 <section class="w-full bg-surface-container-low border-y border-outline-variant/40 py-16 md:py-24" id="menu">
   <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin">
 
-    <!-- Category filter -->
-    <div class="mb-12">
+    <div class="mb-12" data-reveal>
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-6">
         <div class="max-w-xl">
           <span class="font-kicker text-kicker uppercase text-primary tracking-widest block mb-3">Browse by Category</span>
@@ -139,8 +156,7 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         </p>
       </div>
 
-      <!-- Filter buttons (scroll horizontally on mobile) -->
-      <div class="-mx-5 sm:mx-0 px-5 sm:px-0 overflow-x-auto sm:overflow-visible no-scrollbar" id="menu-filters-wrapper">
+      <div class="-mx-5 sm:mx-0 px-5 sm:px-0 overflow-x-auto sm:overflow-visible no-scrollbar">
         <div class="flex sm:flex-wrap items-center gap-2 min-w-max sm:min-w-0" id="menu-filters" role="group" aria-label="Filter menu by category">
           <button type="button" class="menu-filter-btn shrink-0 inline-flex items-center justify-center font-label-md text-[12px] uppercase tracking-[0.1em] h-11 px-5 rounded-full border transition-all duration-200 active:scale-[0.98] border-primary bg-primary text-on-primary" data-filter="all" aria-pressed="true">
             All
@@ -166,14 +182,11 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         </div>
       </div>
 
-      <!-- Live count -->
       <p class="mt-5 font-kicker text-kicker uppercase tracking-widest text-on-surface-variant" id="menu-count" aria-live="polite">10 items</p>
     </div>
 
-    <!-- Menu grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="menu-items-grid">
 
-      <!-- Tacos -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="tacos">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Tacos</h3>
@@ -191,7 +204,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         </div>
       </article>
 
-      <!-- Taco Dinner -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="tacos">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Taco Dinner</h3>
@@ -209,7 +221,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         </div>
       </article>
 
-      <!-- Quesabirria -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="tacos">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Quesabirria</h3>
@@ -218,7 +229,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">A house favorite, served hot and ready to dip.</p>
       </article>
 
-      <!-- Quesadilla -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="tacos">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Quesadilla</h3>
@@ -236,7 +246,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         </div>
       </article>
 
-      <!-- Elote Corn -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="tacos">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Elote Corn</h3>
@@ -244,7 +253,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         </div>
       </article>
 
-      <!-- Tortas -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="tortas">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Tortas</h3>
@@ -262,7 +270,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         </div>
       </article>
 
-      <!-- Burritos -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="burritos">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Burritos</h3>
@@ -280,7 +287,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         </div>
       </article>
 
-      <!-- Tostadas -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="tostadas">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Tostadas</h3>
@@ -298,7 +304,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         </div>
       </article>
 
-      <!-- Veggie Taco -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="veggie">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Veggie Taco</h3>
@@ -307,7 +312,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">Beans, rice, cheese, lettuce, sour cream and avocado.</p>
       </article>
 
-      <!-- Veggie Wrap -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="veggie">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Veggie Wrap</h3>
@@ -316,7 +320,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">Beans, rice, cheese, lettuce, sour cream and avocado.</p>
       </article>
 
-      <!-- Drinks -->
       <article class="menu-card rounded-xl bg-surface-container-lowest border border-outline-variant/50 p-6 hover:border-outline-variant hover:shadow-[0_12px_32px_-20px_rgba(33,26,23,0.25)] flex flex-col" data-category="drinks">
         <div class="flex items-start justify-between gap-4 mb-3">
           <h3 class="font-headline-sm text-headline-sm text-on-surface">Drinks</h3>
@@ -333,7 +336,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
 
     </div>
 
-    <!-- Empty state (hidden until a filter yields nothing) -->
     <div id="menu-empty" class="hidden py-20 text-center">
       <div class="mx-auto w-14 h-14 rounded-full bg-surface-container flex items-center justify-center mb-5">
         <span class="material-symbols-outlined text-[26px] text-on-surface-variant">search_off</span>
@@ -351,7 +353,7 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
 <!-- ==================== MENU CTA ==================== -->
 <section class="w-full bg-surface py-20 md:py-28">
   <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin">
-    <div class="rounded-2xl bg-inverse-surface text-inverse-on-surface p-10 md:p-14 relative overflow-hidden">
+    <div class="rounded-2xl bg-inverse-surface text-inverse-on-surface p-10 md:p-14 relative overflow-hidden" data-reveal>
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
         <div class="lg:col-span-7">
           <span class="font-kicker text-kicker uppercase text-primary-fixed-dim tracking-widest block mb-4">Gatherings &amp; Inquiries</span>
@@ -385,9 +387,6 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
         <p class="font-body-md text-body-md text-surface-variant/85 max-w-sm leading-relaxed">
           Authentic Mexican favorites made for everyday cravings and memorable gatherings.
         </p>
-        <div class="pt-1">
-          <a class="inline-flex items-center justify-center font-label-md text-[13px] uppercase tracking-[0.1em] bg-primary-container text-on-primary-container hover:bg-primary-fixed transition-colors duration-200 px-6 h-11 rounded-full" href="contact.html">Request a Quote</a>
-        </div>
       </div>
       <div class="md:col-span-3 md:col-start-7 flex flex-col gap-4">
         <span class="font-kicker text-kicker uppercase tracking-widest text-primary-fixed-dim">Navigation</span>
@@ -462,8 +461,41 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
     drawer.addEventListener('click', function(e){ if (e.target === drawer) closeDrawer(); });
     document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !drawer.classList.contains('hidden')) closeDrawer(); });
   }
+})();
+</script>
 
-  /* ---------------- MENU FILTER ---------------- */
+<script>
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Scroll reveal ---------- */
+  document.querySelectorAll('[data-stagger]').forEach(function(parent){
+    var step = parseInt(parent.getAttribute('data-stagger'), 10) || 80;
+    parent.querySelectorAll('[data-stagger-item]').forEach(function(child, i){
+      child.style.setProperty('--reveal-delay', (i * step) + 'ms');
+      if (!child.hasAttribute('data-reveal')) child.setAttribute('data-reveal', '');
+    });
+  });
+
+  var all = document.querySelectorAll('[data-reveal]');
+  var io = null;
+
+  if (!reduced && 'IntersectionObserver' in window) {
+    io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          e.target.classList.add('is-in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+    all.forEach(function(el){ io.observe(el); });
+  } else {
+    all.forEach(function(el){ el.classList.add('is-in'); });
+  }
+
+  /* ---------- Menu filter ---------- */
   var filterBtns = Array.prototype.slice.call(document.querySelectorAll('.menu-filter-btn'));
   var cards = Array.prototype.slice.call(document.querySelectorAll('.menu-card'));
   var countEl = document.getElementById('menu-count');
@@ -484,28 +516,46 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
     countEl.textContent = visible === 1 ? '1 item' : visible + ' items';
   }
 
-  function applyFilter(filter){
+  function applyFilter(filter, animate){
     var visible = 0;
+    var shown = [];
+
     cards.forEach(function(card){
       var matches = filter === 'all' || card.getAttribute('data-category') === filter;
       if (matches){
         card.classList.remove('is-hidden');
+        shown.push(card);
         visible++;
       } else {
         card.classList.add('is-hidden');
       }
     });
+
     updateCount(visible);
+
     if (emptyEl) {
       if (visible === 0) { emptyEl.classList.remove('hidden'); }
       else { emptyEl.classList.add('hidden'); }
+    }
+
+    // Re-trigger stagger reveal for visible cards on filter change
+    if (animate && !reduced){
+      shown.forEach(function(card){ card.classList.remove('is-in'); });
+      // Force reflow
+      void document.body.offsetWidth;
+      shown.forEach(function(card, i){
+        card.style.setProperty('--reveal-delay', (i * 35) + 'ms');
+        card.classList.add('is-in');
+      });
+    } else {
+      shown.forEach(function(card){ card.classList.add('is-in'); });
     }
   }
 
   filterBtns.forEach(function(btn){
     btn.addEventListener('click', function(){
       filterBtns.forEach(function(b){ setButtonState(b, b === btn); });
-      applyFilter(btn.getAttribute('data-filter'));
+      applyFilter(btn.getAttribute('data-filter'), true);
     });
   });
 
@@ -513,13 +563,13 @@ header.scrolled{background-color:rgba(255,248,246,0.85);backdrop-filter:blur(20p
     resetBtn.addEventListener('click', function(){
       var allBtn = filterBtns.filter(function(b){ return b.getAttribute('data-filter') === 'all'; })[0];
       filterBtns.forEach(function(b){ setButtonState(b, b === allBtn); });
-      applyFilter('all');
+      applyFilter('all', true);
     });
   }
 
-  // Initial state
+  // Initial
   updateCount(cards.length);
 })();
 </script>
 </body>
-        </html>
+           </html>
